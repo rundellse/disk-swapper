@@ -1,0 +1,8 @@
+Very basic tool for swapping the data in two drives.
+
+Bear in mind:
+  - Attributes (hidden, read-only etc.) will be stripped from swapped files.
+
+
+TODO:
+  - Better copying, currently there's not much matching path handling. I don't think anyway.
