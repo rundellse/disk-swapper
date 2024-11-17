@@ -4,19 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="18cbfa99-9ae8-448a-8c7e-3b8ed95d571d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/ktlint-plugin.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/DiskSwapper.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/DiskSwapperCLI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/Main.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/Utils.kt" afterDir="false" />
+    <list default="true" id="18cbfa99-9ae8-448a-8c7e-3b8ed95d571d" name="Changes" comment="Implement alternating swap, currently the only behaviour performed.&#10;&#10;The transfer, rather than putting the whole of driveA onto driveB then the reverse, alternates every file transferred in descending order of size.&#10;Some finegaling to ensure empty directories are copied and deleted from bottom-up. &#10;&#10;Currently, if a transferred file won't fit on the destination drive it will fail, future work will try to get around this by transferring batches of files if needed to make space.&#10;&#10;Separated CLI concern to its own class.">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/DiskSwapperCLI.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/kotlin/DiskSwapperTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README" beforeDir="false" afterPath="$PROJECT_DIR$/README" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/DiskSwapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/DiskSwapper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/DiskSwapperCLI.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Utils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Utils.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +23,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
+        <option value="Kotest Class" />
         <option value="Kotlin Class" />
       </list>
     </option>
@@ -36,6 +34,9 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="2k4x6S0HZSDv2DVGVdc7FxZmlsa" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -48,13 +49,25 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;Kotest&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.Kotest&quot;: &quot;io.kotest.core.spec.style.FunSpec&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.ktlint-plugin&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
-  <component name="RunManager" selected="Kotlin.MainKt">
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="io.kotest.core.spec.style.FunSpec" />
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Maven.consoleApp [clean,install]">
     <configuration name="MainKt" type="JetRunConfigurationType" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="MainKt" />
       <module name="consoleApp" />
@@ -100,10 +113,82 @@
       </MavenSettings>
       <method v="2" />
     </configuration>
+    <configuration name="DiskSwapperIntegrationTest" type="ioKotest" factoryName="Kotest" temporary="true" defaultName="singleModule">
+      <module name="consoleApp" />
+      <option name="jrePath" value="" />
+      <option name="jrePathEnabled" value="false" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" value="$MODULE_WORKING_DIR$" />
+      <option name="programParameters" value="" />
+      <option name="specName" value="DiskSwapperIntegrationTest" />
+      <option name="testPath" value="" />
+      <option name="packageName" value="" />
+      <option name="vmparams" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DiskSwapperTest (1)" type="ioKotest" factoryName="Kotest" temporary="true" defaultName="singleModule">
+      <module name="consoleApp" />
+      <option name="jrePath" value="" />
+      <option name="jrePathEnabled" value="false" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" value="$MODULE_WORKING_DIR$" />
+      <option name="programParameters" value="" />
+      <option name="specName" value="DiskSwapperTest" />
+      <option name="testPath" value="" />
+      <option name="packageName" value="" />
+      <option name="vmparams" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DiskSwapperTest" type="ioKotest" factoryName="Kotest" temporary="true" defaultName="singleModule">
+      <module name="consoleApp" />
+      <option name="jrePath" value="" />
+      <option name="jrePathEnabled" value="false" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" value="$MODULE_WORKING_DIR$" />
+      <option name="programParameters" value="" />
+      <option name="specName" value="DiskSwapperTest" />
+      <option name="testPath" value="" />
+      <option name="packageName" value="" />
+      <option name="vmparams" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DiskSwapperTest: test test" type="ioKotest" factoryName="Kotest" temporary="true" defaultName="singleModule">
+      <module name="consoleApp" />
+      <option name="jrePath" value="" />
+      <option name="jrePathEnabled" value="false" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" value="$MODULE_WORKING_DIR$" />
+      <option name="programParameters" value="" />
+      <option name="specName" value="DiskSwapperTest" />
+      <option name="testPath" value="test test" />
+      <option name="packageName" value="" />
+      <option name="vmparams" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
+      <item itemvalue="Kotest.DiskSwapperTest: test test" />
+      <item itemvalue="Kotest.DiskSwapperTest" />
+      <item itemvalue="Kotest.DiskSwapperTest (1)" />
+      <item itemvalue="Kotest.DiskSwapperIntegrationTest" />
       <item itemvalue="Kotlin.MainKt" />
       <item itemvalue="Maven.consoleApp [clean,install]" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Kotest.DiskSwapperTest: test test" />
+        <item itemvalue="Kotest.DiskSwapperTest (1)" />
+        <item itemvalue="Kotest.DiskSwapperTest" />
+        <item itemvalue="Kotest.DiskSwapperIntegrationTest" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -114,25 +199,29 @@
       <option name="presentableId" value="Default" />
       <updated>1722556476477</updated>
     </task>
+    <task id="LOCAL-00001" summary="Initial Commit - Initial implementation of simple swap processing. Including some basic error handling, either restarting or skipping problem files.">
+      <created>1723245428939</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1723245428939</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial Commit - Initial implementation of simple swap processing. Including some basic error handling, either restarting or skipping problem files." />
+    <MESSAGE value="Implement alternating swap, currently the only behaviour performed.&#10;&#10;The transfer, rather than putting the whole of driveA onto driveB then the reverse, alternates every file transferred in descending order of size.&#10;Some finegaling to ensure empty directories are copied and deleted from bottom-up. &#10;&#10;Currently, if a transferred file won't fit on the destination drive it will fail, future work will try to get around this by transferring batches of files if needed to make space.&#10;&#10;Separated CLI concern to its own class." />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement alternating swap, currently the only behaviour performed.&#10;&#10;The transfer, rather than putting the whole of driveA onto driveB then the reverse, alternates every file transferred in descending order of size.&#10;Some finegaling to ensure empty directories are copied and deleted from bottom-up. &#10;&#10;Currently, if a transferred file won't fit on the destination drive it will fail, future work will try to get around this by transferring batches of files if needed to make space.&#10;&#10;Separated CLI concern to its own class." />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>jar://$MAVEN_REPOSITORY$/commons-io/commons-io/2.16.1/commons-io-2.16.1-sources.jar!/org/apache/commons/io/FileUtils.java</url>
-          <line>852</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>jar://$MAVEN_REPOSITORY$/commons-io/commons-io/2.16.1/commons-io-2.16.1-sources.jar!/org/apache/commons/io/FileUtils.java</url>
-          <line>295</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/src/main/kotlin/DiskSwapper.kt</url>
-          <line>144</line>
-          <option name="timeStamp" value="4" />
+          <line>141</line>
+          <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -3,7 +3,7 @@ import java.text.StringCharacterIterator
 
 class Utils {
     companion object {
-        @JvmStatic fun humanReadableByteCountSI(bytesLong: Long): String {
+        fun humanReadableByteCountSI(bytesLong: Long): String {
             var bytes = bytesLong
             if (-1000 < bytes && bytes < 1000) {
                 return "$bytes B"
