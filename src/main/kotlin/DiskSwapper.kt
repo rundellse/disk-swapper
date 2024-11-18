@@ -96,9 +96,6 @@ class DiskSwapper(
         val allFilesOrderedA = assembleSizeOrderedListOfFiles(driveA.listFiles()?.toList() ?: emptyList())
         val allFilesOrderedB = assembleSizeOrderedListOfFiles(driveB.listFiles()?.toList() ?: emptyList())
 
-        // If the largest file of one side does not have space to move, try to move multiple files from the other drive until that space is exceeded.
-        if (allFilesOrderedA[0].totalSpace < driveB.freeSpace) {
-        }
         // Then move files alternately, there should always be space now so should be unfettered.
         if (isVerbose) println("Performing alternating swap of files between ${driveA.path} and ${driveB.path}")
         doAlternatingSwap(allFilesOrderedA, allFilesOrderedB, driveA, driveB)
@@ -106,20 +103,60 @@ class DiskSwapper(
     }
 
     private fun doAlternatingSwap(
-        fileListA: List<File>,
-        fileListB: List<File>,
+        fileListA: MutableList<File>,
+        fileListB: MutableList<File>,
         driveA: File,
         driveB: File,
     ) {
         val maxNoOfFiles = max(fileListA.size, fileListB.size)
         for (i in 0 until maxNoOfFiles) {
-            if (i < fileListA.size) copyFileToDriveAndDelete(fileListA[i], driveB)
-            if (i < fileListB.size) copyFileToDriveAndDelete(fileListB[i], driveA)
+            if (i < fileListA.size) {
+                val fileAFile = fileListA[i]
+                if (fileAFile.length() >= driveB.usableSpace) {
+                    //TODO: This needs testing
+
+                    // If the largest file of one side does not have space to move, try to move multiple files from the other drive until that space is exceeded.
+                    makeSpaceByCopyingFilesBack(fileListB, fileAFile, driveA, driveB)
+                }
+                copyFileToDriveAndDelete(fileAFile, driveB)
+            }
+            if (i < fileListB.size) {
+                val fileBFile = fileListB[i]
+                if (fileBFile.length() >= driveA.usableSpace) {
+                    // If the largest file of one side does not have space to move, try to move multiple files from the other drive until that space is exceeded.
+                    makeSpaceByCopyingFilesBack(fileListA, fileBFile, driveB, driveA)
+                }
+                copyFileToDriveAndDelete(fileListB[i], driveA)
+            }
         }
         for (i in 0 until maxNoOfFiles) {
             if (i < fileListA.size) removeFolder(fileListA[i])
             if (i < fileListB.size) removeFolder(fileListB[i])
         }
+    }
+
+    private fun makeSpaceByCopyingFilesBack(
+        destinationDriveFileList: MutableList<File>,
+        fileRequiringSpace: File,
+        sourceDrive: File,
+        destinationDrive: File
+    ) {
+        // Attempt to make space on driveB to accommodate the file
+        val driveBSpaceMakingFileList = mutableListOf<File>()
+        var driveBFileSizeSum = 0L
+        for (driveBFile in destinationDriveFileList) {
+            driveBFileSizeSum += driveBFile.length()
+            driveBSpaceMakingFileList.add(driveBFile)
+
+            if (driveBFileSizeSum >= fileRequiringSpace.length()) break
+        }
+
+        if (driveBFileSizeSum > sourceDrive.usableSpace) throw RuntimeException("Not enough room in drives to allow even an alternating file swap. Make space is at least one of the drives.")
+        if (isVerbose) println("Moving files from $destinationDrive to $sourceDrive to make room for file $fileRequiringSpace, File is ${humanReadableByteCountSI(fileRequiringSpace.length())}, making $driveBFileSizeSum of space by moving ${driveBSpaceMakingFileList.size} files.")
+        for (driveBFile in driveBSpaceMakingFileList) {
+            copyFileToDriveAndDelete(driveBFile, sourceDrive)
+        }
+        destinationDriveFileList.removeAll(driveBSpaceMakingFileList)
     }
 
     private fun copyFileToDriveAndDelete(
@@ -137,7 +174,7 @@ class DiskSwapper(
             FileUtils.copyFileToDirectory(entry, File(destination))
             FileUtils.delete(entry)
         } else if (entry.isDirectory) {
-            val destinationDirectory = destination + "\\" + entry.name
+            val destinationDirectory = destination + File.separator + entry.name
             if (isVerbose) println("Creating directory $destinationDirectory if it is not already created.")
             Files.createDirectories(Path(destinationDirectory))
         } else {
@@ -151,7 +188,7 @@ class DiskSwapper(
         }
     }
 
-    fun assembleSizeOrderedListOfFiles(listOfFiles: List<File>) : List<File> {
+    fun assembleSizeOrderedListOfFiles(listOfFiles: List<File>) : MutableList<File> {
         // Order by size descending, put directories at the end and then order them reverse-alphabetically to allow deletions to cascade up the file-tree.
         return assembleListOfFiles(listOfFiles).sortedBy { file ->
 //            println("Comparing file $file. isDirectory: ${file.isDirectory}, totalSpace: ${file.length()}")
@@ -161,10 +198,10 @@ class DiskSwapper(
                 return@sortedBy Long.MAX_VALUE - charactersValueSum
             }
             else return@sortedBy file.length() * -1
-        }
+        }.toMutableList()
     }
 
-    private fun assembleListOfFiles(listOfFiles: List<File>) : List<File> {
+    private fun assembleListOfFiles(listOfFiles: List<File>) : MutableList<File> {
         val listOfAllFiles = mutableListOf<File>()
 
         for (entry: File in listOfFiles) {

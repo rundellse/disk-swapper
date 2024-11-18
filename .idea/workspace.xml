@@ -4,15 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="18cbfa99-9ae8-448a-8c7e-3b8ed95d571d" name="Changes" comment="Implement alternating swap, currently the only behaviour performed.&#10;&#10;The transfer, rather than putting the whole of driveA onto driveB then the reverse, alternates every file transferred in descending order of size.&#10;Some finegaling to ensure empty directories are copied and deleted from bottom-up. &#10;&#10;Currently, if a transferred file won't fit on the destination drive it will fail, future work will try to get around this by transferring batches of files if needed to make space.&#10;&#10;Separated CLI concern to its own class.">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/DiskSwapperCLI.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/kotlin/DiskSwapperTest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README" beforeDir="false" afterPath="$PROJECT_DIR$/README" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+    <list default="true" id="18cbfa99-9ae8-448a-8c7e-3b8ed95d571d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/DiskSwapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/DiskSwapper.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/DiskSwapperCLI.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Utils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Utils.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -206,13 +199,28 @@
       <option name="project" value="LOCAL" />
       <updated>1723245428939</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Implement batch-swap when a file does not fit on a destination drive but space can be made by transferring a number of files back.">
+      <created>1731935366212</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1731935366212</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Implement batch-swap when a file does not fit on a destination drive but space can be made by transferring a number of files back.">
+      <created>1731935399244</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1731935399244</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial Commit - Initial implementation of simple swap processing. Including some basic error handling, either restarting or skipping problem files." />
     <MESSAGE value="Implement alternating swap, currently the only behaviour performed.&#10;&#10;The transfer, rather than putting the whole of driveA onto driveB then the reverse, alternates every file transferred in descending order of size.&#10;Some finegaling to ensure empty directories are copied and deleted from bottom-up. &#10;&#10;Currently, if a transferred file won't fit on the destination drive it will fail, future work will try to get around this by transferring batches of files if needed to make space.&#10;&#10;Separated CLI concern to its own class." />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement alternating swap, currently the only behaviour performed.&#10;&#10;The transfer, rather than putting the whole of driveA onto driveB then the reverse, alternates every file transferred in descending order of size.&#10;Some finegaling to ensure empty directories are copied and deleted from bottom-up. &#10;&#10;Currently, if a transferred file won't fit on the destination drive it will fail, future work will try to get around this by transferring batches of files if needed to make space.&#10;&#10;Separated CLI concern to its own class." />
+    <MESSAGE value="Implement batch-swap when a file does not fit on a destination drive but space can be made by transferring a number of files back." />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement batch-swap when a file does not fit on a destination drive but space can be made by transferring a number of files back." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -220,7 +228,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/src/main/kotlin/DiskSwapper.kt</url>
-          <line>141</line>
+          <line>178</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>
