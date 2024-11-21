@@ -1,8 +1,10 @@
-Very basic tool for swapping the data in two drives.
+Pretty basic tool for swapping the data in two drives.
 
 Bear in mind:
   - Attributes (hidden, read-only etc.) will be stripped from swapped files.
 
 
 TODO:
-  - Better path copying
+  - Align the two swap approaches, they can probably share code.
+  - Look into more security, edge cases, issue handling.
+  - This seems very very difficult to create unit tests for due to the trickiness of creating good mock test files. To be further looked into. So far it's been tested by hand which is painful and limited.

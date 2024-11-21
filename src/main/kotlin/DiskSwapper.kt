@@ -54,7 +54,6 @@ class DiskSwapper(
         fileList: List<File>,
         drive: File,
     ) {
-        // TODO: Align simple and alternating swap paths, they can almost certainly be aligned.
         for (entry: File in fileList) {
             if (excludedDirectories.contains(entry.name)) {
                 println("Skipping ${entry.name}, restricted directory.")
