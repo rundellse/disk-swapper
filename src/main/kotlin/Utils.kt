@@ -3,6 +3,14 @@ import java.text.StringCharacterIterator
 
 class Utils {
     companion object {
+
+        /**
+         * Create a human-readable String output of data-size from a given number of bytes.
+         * Completely and shamelessly copied from https://stackoverflow.com/a/3758880, as it's excellent.
+         *
+         * @param bytesLong - Number of bytes to make human-readable
+         * @return - Human-readable presentation of the number of bytes as String.
+         */
         fun humanReadableByteCountSI(bytesLong: Long): String {
             var bytes = bytesLong
             if (-1000 < bytes && bytes < 1000) {
