@@ -5,6 +5,7 @@ Bear in mind:
 
 
 TODO:
+  - Some sort of entrypoint, in case someone actually wants to use this... or more likely I do, in the future.
   - Align the two swap approaches, they can probably share code.
   - Look into more security, edge cases, issue handling.
   - This seems very very difficult to create unit tests for due to the trickiness of creating good mock test files. To be further looked into. So far it's been tested by hand which is painful and limited.
