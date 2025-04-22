@@ -1,11 +1,14 @@
 Pretty basic tool for swapping the data in two drives.
 
+If one drive has the space to fit the content of the other, as simple copy of all data to the one with space, then the data from that drive is in turn copied over.
+If there isn't space for the whole content of one drive in the other the files are alternately copied (in small groups if needed to make space).
+
 Bear in mind:
   - Attributes (hidden, read-only etc.) will be stripped from swapped files.
 
 
 TODO:
-  - Some sort of entrypoint, in case someone actually wants to use this... or more likely I do, in the future.
-  - Align the two swap approaches, they can probably share code.
+  - Some sort of entrypoint, in case someone actually wants to use this... or more likely I do, in the future. Currently most easily just run from IDE.
+  - Align the two swap approaches, they can probably share a lot more code.
   - Look into more security, edge cases, issue handling.
-  - This seems very very difficult to create unit tests for due to the trickiness of creating good mock test files. To be further looked into. So far it's been tested by hand which is painful and limited.
+  - This seems very very difficult to create tests for due to the trickiness of creating good mock test files. To be further looked into. So far it's been tested by hand which is painful and limited.
